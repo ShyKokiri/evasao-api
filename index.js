@@ -53,6 +53,33 @@ router.post("/egressos", upload.single("file"), function (req, res) {
     });
 });
 
+// ajuste router.post("/matriculas" para receber o arquivo em XLSX
+const multerXlsx = require("multer-xlsx");
+const uploadXlsx = multerXlsx({ dest: "tmp/xlsx/" });
+
+router.post("/matriculas-xlsx", uploadXlsx.single("file"), function (req, res) {
+  if (!req.file) {
+    return res.status(400).send("No file uploaded.");
+  }
+  const fileRows = [];
+  const readableStream = fs.createReadStream(req.file.path)
+        .pipe(csvParser());
+  readableStream
+    .on("data", function (data) {
+      fileRows.push(data); // push each row
+    })
+    .on("end", function () {
+      console.log(fileRows); //contains array of arrays. Each inner array represents row of the csv file, with each element of it a column
+      fs.unlinkSync(req.file.path); // remove temp file
+      res.send("Finished reading xlsx file")
+      //process "fileRows" and respond
+    });
+});
+
+// ajuste router.post("/matriculas" para receber o arquivo em CSV
+const multerCsv = require("multer-csv");
+const uploadCsv = multerCsv({ dest: "tmp/csv/" });
+
 router.post("/matriculas", upload.single("file"), function (req, res) {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
