@@ -73,9 +73,28 @@ router.post("/matriculas-xlsx", upload.single("file"), function (req, res) {
   }
   const workbook = xlsx.readFile(req  .file.path);
   const sheet_name_list = workbook.SheetNames;
-  const xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+  let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]] );
+
+  let keys = ["ano", "faculdade", "curso", "codigo", "total_excluidos"]
+
+  xlData = xlData.map(row => {
+    const newRow = {};
+    let i = 0;
+    for (let key in row) {
+       
+         
+          newRow[keys[i++]] = row[key];
+         
+    }
+    return newRow;
+});
+
+
   console.log(xlData);
   res.send("Finished reading xlsx file")
+
+  //how to set the key of the object
+ 
 });
 
 
