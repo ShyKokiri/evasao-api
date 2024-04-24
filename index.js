@@ -32,7 +32,7 @@ router.post("/ingressos", upload.single("file"), function (req, res) {
   }
   let listIngressos = converterIngressosParaObjetos (req.file)
   
-  // console.log(listaIngressos)
+  console.log(listaIngressos)
 
   // let gt = new GeradorDeTaxa()
   // let resultadoEvasao = gt.gerarEvasao(listIngressos, listaX, listaY, listaZ)
@@ -47,7 +47,7 @@ router.post("/ingressos", upload.single("file"), function (req, res) {
 
  function converterIngressosParaObjetos(file){
   const fileRows = [];
-  const egressos=[];
+  const ingressos=[];
   const readableStream = fs.createReadStream(req.file.path)
         .pipe(csvParser());
   readableStream
@@ -56,19 +56,20 @@ router.post("/ingressos", upload.single("file"), function (req, res) {
     })
     .on("end", function () {
 
-      let arrayEngressos = []
+      let arrayIngressos = []
       fileRows.forEach( (row)=>{
-
-        //convert cada row em OBjeto Dados do Egresso 
-        let egresso =  converteRowParaEgresso(row)
         console.log(row)
+          
+        //convert cada row em OBjeto Dados do Egresso 
+        // let ingresso =  converteRowParaIngresso(row)
+        // console.log(row)
 
-        //Adiciona no array de Egressos
-        egressos.push(egresso)
+        // //Adiciona no array de Egressos
+        // egressos.push(ingresso)
       })
      
     });
-    return egressos
+    return ingressos
  
   }
 
