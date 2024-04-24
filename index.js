@@ -48,14 +48,14 @@ router.post("/ingressos", upload.single("file"), function (req, res) {
  function converterIngressosParaObjetos(file){
   const fileRows = [];
   const ingressos=[];
-  const readableStream = fs.createReadStream(req.file.path)
+  const readableStream = fs.createReadStream(file.path)
         .pipe(csvParser());
   readableStream
     .on("data", function (data) {
       fileRows.push(data); // push each row
     })
     .on("end", function () {
-
+      console.log("---------converterIngressosParaObjetos--------")
       let arrayIngressos = []
       fileRows.forEach( (row)=>{
         console.log(row)
@@ -65,7 +65,7 @@ router.post("/ingressos", upload.single("file"), function (req, res) {
         // console.log(row)
 
         // //Adiciona no array de Egressos
-        // egressos.push(ingresso)
+        // ingressos.push(ingresso)
       })
      
     });
