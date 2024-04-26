@@ -1,8 +1,10 @@
 const http = require("http");
-const fs = require("fs");
 
+
+const fs = require("fs");
 //read files
 const csvParser = require("csv-parser");
+
 const xlsx = require("xlsx");
 
 //upload files
@@ -15,12 +17,14 @@ const app = express();
 const Router = express.Router;
 const router = new Router();
 
-
 const server = http.createServer(app);
 const port = 9000;
 
 //services
-const evasionCalc = require("./evasion-service.js");
+const GeradorDeTaxa = require("./src/service/GeradorDeTaxa.js");
+
+//convertores
+const {converterIngressosParaObjetos} = require("./src/converters/conversores.js");
 
 //data
 const saidaJson = require("./saida.json")
@@ -32,11 +36,10 @@ router.post("/ingressos", upload.single("file"), function (req, res) {
   }
   let listIngressos = converterIngressosParaObjetos (req.file)
   
-  console.log(listaIngressos)
-
-  // let gt = new GeradorDeTaxa()
-  // let resultadoEvasao = gt.gerarEvasao(listIngressos, listaX, listaY, listaZ)
-  // res.json(resultadoEvasao)
+   let gerenciadorDeTaxa = new GeradorDeTaxa()
+   let resultadoEvasao = gerenciadorDeTaxa.gerarTaxaEvasao(listIngressos)
+  
+    res.json(resultadoEvasao)
 
 
   //  fs.unlinkSync(req.file.path); // remove temp file
@@ -45,33 +48,6 @@ router.post("/ingressos", upload.single("file"), function (req, res) {
 });
 
 
- function converterIngressosParaObjetos(file){
-  const fileRows = [];
-  const ingressos=[];
-  const readableStream = fs.createReadStream(file.path)
-        .pipe(csvParser());
-  readableStream
-    .on("data", function (data) {
-      fileRows.push(data); // push each row
-    })
-    .on("end", function () {
-      console.log("---------converterIngressosParaObjetos--------")
-      let arrayIngressos = []
-      fileRows.forEach( (row)=>{
-        console.log(row)
-          
-        //convert cada row em OBjeto Dados do Egresso 
-        // let ingresso =  converteRowParaIngresso(row)
-        // console.log(row)
-
-        // //Adiciona no array de Egressos
-        // ingressos.push(ingresso)
-      })
-     
-    });
-    return ingressos
- 
-  }
 
 router.post("/egressos", upload.single("file"), function (req, res) {
   if (!req.file) {
