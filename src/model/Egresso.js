@@ -1,5 +1,4 @@
-
- class Ingresso {
+class Egresso {
     constructor(){
         this.id = 0
         this.ano = 0
@@ -8,4 +7,4 @@
     }
 }
 
-module.exports = Ingresso;
+module.exports = Egresso;

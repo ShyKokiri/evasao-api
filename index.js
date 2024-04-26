@@ -24,7 +24,7 @@ const port = 9000;
 const GeradorDeTaxa = require("./src/service/GeradorDeTaxa.js");
 
 //convertores
-const {converterIngressosParaObjetos} = require("./src/converters/conversores.js");
+const {converterIngressosParaObjetos,converterEgressosParaObjetos} = require("./src/converters/conversores.js");
 
 //data
 const saidaJson = require("./saida.json")
@@ -53,19 +53,13 @@ router.post("/egressos", upload.single("file"), function (req, res) {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-  const fileRows = [];
-  const readableStream = fs.createReadStream(req.file.path)
-        .pipe(csvParser());
-  readableStream
-    .on("data", function (data) {
-      fileRows.push(data); // push each row
-    })
-    .on("end", function () {
-      console.log(fileRows); //contains array of arrays. Each inner array represents row of the csv file, with each element of it a column
-      fs.unlinkSync(req.file.path); // remove temp file
-      res.send("Finished reading csv file")
-      //process "fileRows" and respond
-    });
+  let listEgressos = converterEgressosParaObjetos (req.file)
+  
+   let gerenciadorDeTaxa = new GeradorDeTaxa()
+   let resultadoEvasao = gerenciadorDeTaxa.gerarTaxaEvasao(listEgressos)
+  
+    res.json(resultadoEvasao)
+  
 });
 
 // ajuste router.post("/matriculas" para receber o arquivo em XLSX
