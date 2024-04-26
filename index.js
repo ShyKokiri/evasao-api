@@ -30,11 +30,12 @@ const {converterIngressosParaObjetos,converterEgressosParaObjetos} = require("./
 const saidaJson = require("./saida.json")
 
 
-router.post("/ingressos", upload.single("file"), function (req, res) {
+router.post("/ingressos", upload.single("file"), async function (req, res) {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-  let listIngressos = converterIngressosParaObjetos (req.file)
+  let listIngressos = await  converterIngressosParaObjetos (req.file)
+  
   
    let gerenciadorDeTaxa = new GeradorDeTaxa()
    let resultadoEvasao = gerenciadorDeTaxa.gerarTaxaEvasao(listIngressos)

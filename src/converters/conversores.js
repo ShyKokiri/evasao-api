@@ -4,32 +4,43 @@ const csvParser = require("csv-parser");
 const Ingresso = require("../model/Ingresso.js")
 const Egresso = require("../model/Egresso.js")
 
-function converterIngressosParaObjetos(file){
-    const fileRows = [];
-    const ingressos=[];
-    const readableStream = fs.createReadStream(file.path)
-          .pipe(csvParser());
-    readableStream
-      .on("data", function (data) {
-        fileRows.push(data); // push each row
-      })
-      .on("end", function () {
-        console.log("---------converterIngressosParaObjetos--------")
-        
-        fileRows.forEach( (row)=>{
-          console.log(row)
-            
-          //convert cada row em OBjeto Dados do Egresso 
-           let ingresso =  converteRowParaIngresso(row)
-          
-          // //Adiciona no array de Egressos
-           ingressos.push(ingresso)
-        })
-       
-      });
-      return ingressos
+function  converterIngressosParaObjetos(file){
    
-    }
+  return new Promise((resolve, reject) => {
+
+      try{
+
+     
+      const fileRows = [];
+      const ingressos=[];
+      const readableStream = fs.createReadStream(file.path)
+            .pipe(csvParser());
+      readableStream
+        .on("data", function (data) {
+          fileRows.push(data); // push each row
+        })
+        .on("end", function () {
+          console.log("---------converterIngressosParaObjetos--------")
+          
+          fileRows.forEach( (row)=>{
+            console.log(row)
+              
+            //convert cada row em OBjeto Dados do Egresso 
+             let ingresso =  converteRowParaIngresso(row)
+            
+            // //Adiciona no array de Egressos
+             ingressos.push(ingresso)
+          })
+         
+        });
+        resolve(ingressos)
+
+      }catch(e){
+        reject(e)
+      }
+   
+    })
+  }
 
 function converteRowParaIngresso(row){
       
