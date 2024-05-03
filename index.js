@@ -59,7 +59,7 @@ router.post("/egressos", upload.single("file"), async function (req, res) {
 
 router.get("/calc" ,  (req, res)=>{
   // realizar o calc da evasao
-  if ( listEgressos.length==0  && listIngressos.length==0){
+  if ( listEgressos.length==0  || listIngressos.length==0){
     res.send("É necessário fazer o upload das listas de egressos e ingressos")
   }else {
 
