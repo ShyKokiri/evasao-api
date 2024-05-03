@@ -2,10 +2,13 @@ module.exports=  class GeradorDeTaxa{
     constructor(){
        
     }
-    gerarTaxaEvasao(listaIngressos){
+    gerarTaxaEvasao(listIngressos, listEgressos){
         console.log("Gerando evasao ....")
         return {
-            taxa:(listaIngressos.length/100)+"%"
+            taxa:50,
+            listIngressos,
+            listEgressos
         }
-    }   
+    }  
+
 }

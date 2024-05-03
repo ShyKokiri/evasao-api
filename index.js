@@ -29,39 +29,45 @@ const {converterIngressosParaObjetos,converterEgressosParaObjetos} = require("./
 //data
 const saidaJson = require("./saida.json")
 
+//Listas
+
+let listEgressos =[]
+let listIngressos =[]
 
 router.post("/ingressos", upload.single("file"), async function (req, res) {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-  let listIngressos = await  converterIngressosParaObjetos (req.file)
+   listIngressos = await  converterIngressosParaObjetos (req.file)
   
-  
-   let gerenciadorDeTaxa = new GeradorDeTaxa()
-   let resultadoEvasao = gerenciadorDeTaxa.gerarTaxaEvasao(listIngressos)
-  
-    res.json(resultadoEvasao)
-
-
-  //  fs.unlinkSync(req.file.path); // remove temp file
-  //res.send("Finished reading csv file")
+  res.json(listIngressos)
 
 });
 
 
 
-router.post("/egressos", upload.single("file"), function (req, res) {
+router.post("/egressos", upload.single("file"), async function (req, res) {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-  let listEgressos = converterEgressosParaObjetos (req.file)
+   listEgressos = await converterEgressosParaObjetos (req.file)
   
-   let gerenciadorDeTaxa = new GeradorDeTaxa()
-   let resultadoEvasao = gerenciadorDeTaxa.gerarTaxaEvasao(listEgressos)
-  
-    res.json(resultadoEvasao)
+    res.json(listEgressos)
   
 });
+
+
+router.get("/calc" ,  (req, res)=>{
+  // realizar o calc da evasao
+  if ( listEgressos.length==0  && listIngressos.length==0){
+    res.send("É necessário fazer o upload das listas de egressos e ingressos")
+  }else {
+
+    let gerenciadorDeTaxa = new GeradorDeTaxa()
+    let resultadoEvasao = gerenciadorDeTaxa.gerarTaxaEvasao(listIngressos, listEgressos)
+      res.json(resultadoEvasao)
+  }
+})
 
 // ajuste router.post("/matriculas" para receber o arquivo em XLSX
 
