@@ -5,8 +5,6 @@ const fs = require("fs");
 //read files
 const csvParser = require("csv-parser");
 
-const xlsx = require("xlsx");
-
 //upload files
 const multer = require("multer");
 const upload = multer({ dest: "tmp/files/" });
@@ -24,7 +22,7 @@ const port = 9000;
 const GeradorDeTaxa = require("./src/service/GeradorDeTaxa.js");
 
 //convertores
-const {converterIngressosParaObjetos,converterEgressosParaObjetos} = require("./src/converters/conversores.js");
+const {converterIngressosParaObjetos,converterEgressosParaObjetos,converterMatriculasParaObjetos} = require("./src/converters/conversores.js");
 
 //data
 const saidaJson = require("./saida.json")
@@ -72,34 +70,15 @@ router.get("/calc" ,  (req, res)=>{
 // ajuste router.post("/matriculas" para receber o arquivo em XLSX
 
 
-router.post("/matriculas-xlsx", upload.single("file"), function (req, res) {
+router.post("/matriculas-xlsx", upload.single("file"), async function (req, res) {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-  const workbook = xlsx.readFile(req  .file.path);
-  const sheet_name_list = workbook.SheetNames;
-  let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]] );
-
-  let keys = ["ano", "faculdade", "curso", "excluidos", "total_excluidos"]
-
-  xlData = xlData.map(row => {
-    const newRow = {};
-    let i = 0;
-    for (let key in row) {
-       
-         
-          newRow[keys[i++]] = row[key];
-         
-    }
-    return newRow;
-});
-
-
-  console.log(xlData);
-  res.send("Finished reading xlsx file")
-
+  listMatriculas = await converterMatriculasParaObjetos (req.file)
+  
+    res.json(listMatriculas)
+  
   //how to set the key of the object
- 
 });
 
 

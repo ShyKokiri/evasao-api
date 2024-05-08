@@ -1,8 +1,10 @@
 const fs = require("fs");
+const xlsx = require("xlsx");
 //read files
 const csvParser = require("csv-parser");
 const Ingresso = require("../model/Ingresso.js");
 const Egresso = require("../model/Egresso.js");
+const Matricula = require("../model/Matricula.js");
 
 function converterIngressosParaObjetos(file) {
   return new Promise((resolve, reject) => {
@@ -86,7 +88,38 @@ function converteRowParaEgresso(row) {
   return egresso;
 }
 
+function isNumber (value){
+    return !isNaN(value)
+}
+function converterMatriculasParaObjetos(file) {
+  let matriculas = [];
+  const workbook = xlsx.readFile(file.path);
+  const sheet_name_list = workbook.SheetNames;
+  let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+
+  //let keys = ["ano", "faculdade", "curso", "excluidos", "total_excluidos"];
+
+  xlData = xlData.forEach((row) => {
+    if (isNumber(row.__EMPTY_3) || isNumber(row.__EMPTY_4) ){
+      let matricula = new Matricula()
+      matricula.ano= row.__EMPTY
+      matricula.faculdade = row.__EMPTY_1
+      matricula.curso = row.__EMPTY_2
+      matricula.matriculas = row.__EMPTY_3
+      matricula.total = row.__EMPTY_4
+      matriculas.push(matricula)
+    }
+    
+
+ //mais 
+
+   
+  });
+  return matriculas;
+}
+
 module.exports = {
   converterEgressosParaObjetos,
   converterIngressosParaObjetos,
+  converterMatriculasParaObjetos
 };
