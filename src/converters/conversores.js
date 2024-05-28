@@ -5,6 +5,7 @@ const csvParser = require("csv-parser");
 const Ingresso = require("../model/Ingresso.js");
 const Egresso = require("../model/Egresso.js");
 const Matricula = require("../model/Matricula.js");
+const Excluido = require("../model/Excluido.js");
 
 function converterIngressosParaObjetos(file) {
   return new Promise((resolve, reject) => {
@@ -109,17 +110,40 @@ function converterMatriculasParaObjetos(file) {
       matricula.total = row.__EMPTY_4
       matriculas.push(matricula)
     }
-    
-
- //mais 
-
-   
+ //mais  
   });
   return matriculas;
+}
+
+function converterExcluidosParaObjetos(file) {
+  let excluidos = [];
+  const workbook = xlsx.readFile(file.path);
+  const sheet_name_list = workbook.SheetNames;
+  let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+
+  xlData = xlData.forEach((row) => {
+    console.log(row)
+      let excluido = new Excluido()
+      excluido.periodo= row["Período"]
+      excluido.situacao = row["Situação"]
+      excluido.ano = row["Ano/Semestre da Ocorrência"]
+      excluido.unidade = row["Unidade de Lotação do Curso"]
+      excluido.curso = row["Curso"]
+      excluido.total_periodo = row["Total por Período"]
+      excluido.total_curso = row["Total por Curso"]
+      excluido.total_unidade = row["Total por Unidade"]
+      excluido.total_ocorrencia = row["Total por Ocorrência"]
+      excluido.total_ano = row["Total por Ano/Semestre"]
+      excluido.total = row["Total Ocorrências"]
+      excluidos.push(excluido)
+ //mais  
+  });
+  return excluidos;
 }
 
 module.exports = {
   converterEgressosParaObjetos,
   converterIngressosParaObjetos,
-  converterMatriculasParaObjetos
+  converterMatriculasParaObjetos,
+  converterExcluidosParaObjetos
 };
