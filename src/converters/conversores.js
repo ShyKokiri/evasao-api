@@ -29,8 +29,8 @@ function converterIngressosParaObjetos(file) {
             // //Adiciona no array de Egressos
             ingressos.push(ingresso);
           });
+          resolve(ingressos);
         });
-      resolve(ingressos);
     } catch (e) {
       reject(e);
     }
@@ -70,8 +70,8 @@ function converterEgressosParaObjetos(file) {
             // //Adiciona no array de Egressos
             egressos.push(egresso);
           });
+          resolve(egressos)
         });
-      resolve(egressos);
     } catch (e) {
       reject(e);
     }
@@ -93,52 +93,67 @@ function isNumber (value){
     return !isNaN(value)
 }
 function converterMatriculasParaObjetos(file) {
-  let matriculas = [];
-  const workbook = xlsx.readFile(file.path);
-  const sheet_name_list = workbook.SheetNames;
-  let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
 
-  //let keys = ["ano", "faculdade", "curso", "excluidos", "total_excluidos"];
-
-  xlData = xlData.forEach((row) => {
-    if (isNumber(row.__EMPTY_3) || isNumber(row.__EMPTY_4) ){
-      let matricula = new Matricula()
-      matricula.ano= row.__EMPTY
-      matricula.faculdade = row.__EMPTY_1
-      matricula.curso = row.__EMPTY_2
-      matricula.matriculas = row.__EMPTY_3
-      matricula.total = row.__EMPTY_4
-      matriculas.push(matricula)
+  return new Promise (function (resolve, reject){
+    try {
+        let matriculas = [];
+        const workbook = xlsx.readFile(file.path);
+        const sheet_name_list = workbook.SheetNames;
+        let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+      
+        //let keys = ["ano", "faculdade", "curso", "excluidos", "total_excluidos"];
+      
+        xlData = xlData.forEach((row) => {
+          if (isNumber(row.__EMPTY_3) || isNumber(row.__EMPTY_4) ){
+            let matricula = new Matricula()
+            matricula.ano= row.__EMPTY
+            matricula.faculdade = row.__EMPTY_1
+            matricula.curso = row.__EMPTY_2
+            matricula.matriculas = row.__EMPTY_3
+            matricula.total = row.__EMPTY_4
+            matriculas.push(matricula)
+          }
+      
+        });
+        resolve(matriculas);
+    } catch (error) {
+        reject(error)
     }
- //mais  
-  });
-  return matriculas;
+  })
 }
 
 function converterExcluidosParaObjetos(file) {
-  let excluidos = [];
-  const workbook = xlsx.readFile(file.path);
-  const sheet_name_list = workbook.SheetNames;
-  let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
 
-  xlData = xlData.forEach((row) => {
-    console.log(row)
-      let excluido = new Excluido()
-      excluido.periodo= row["Período"]
-      excluido.situacao = row["Situação"]
-      excluido.ano = row["Ano/Semestre da Ocorrência"]
-      excluido.unidade = row["Unidade de Lotação do Curso"]
-      excluido.curso = row["Curso"]
-      excluido.total_periodo = row["Total por Período"]
-      excluido.total_curso = row["Total por Curso"]
-      excluido.total_unidade = row["Total por Unidade"]
-      excluido.total_ocorrencia = row["Total por Ocorrência"]
-      excluido.total_ano = row["Total por Ano/Semestre"]
-      excluido.total = row["Total Ocorrências"]
-      excluidos.push(excluido)
- //mais  
-  });
-  return excluidos;
+  return new Promise (function (resolve, reject){
+
+      try {
+          let excluidos = [];
+          const workbook = xlsx.readFile(file.path);
+          const sheet_name_list = workbook.SheetNames;
+          let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+
+          xlData = xlData.forEach((row) => {
+            console.log(row)
+              let excluido = new Excluido()
+              excluido.periodo= row["Período"]
+              excluido.situacao = row["Situação"]
+              excluido.ano = row["Ano/Semestre da Ocorrencia"]
+              excluido.unidade = row["Unidade de Lotação do Curso"]
+              excluido.curso = row["Curso"]
+              excluido.total_periodo = row["Total por Periodo"]
+              excluido.total_curso = row["Total por Curso"]
+              excluido.total_unidade = row["Total por Unidade"]
+              excluido.total_ocorrencia = row["Total por Ocorrência"]
+              excluido.total_ano = row["Total por Ano/Semestre"]
+              excluido.total = row["Total Ocorrências"]
+              excluidos.push(excluido)
+          });
+          resolve( excluidos );
+      } catch (error) {
+        reject (error)
+      } 
+  })
+  
 }
 
 module.exports = {

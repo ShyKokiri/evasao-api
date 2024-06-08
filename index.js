@@ -12,7 +12,7 @@ const upload = multer({ dest: "tmp/files/" });
 //express - server
 const express = require("express");
 const app = express();
-app.use(cors);
+app.use(cors());
 
 const Router = express.Router;
 const router = new Router();
@@ -59,14 +59,22 @@ router.post("/egressos", upload.single("file"), async function (req, res) {
 
 router.get("/calc", (req, res) => {
   // realizar o calc da evasao
-  if (listEgressos.length == 0 || listIngressos.length == 0) {
-    res.send("É necessário fazer o upload das listas de egressos e ingressos");
+  if (
+    listEgressos.length == 0 ||
+    listIngressos.length == 0 ||
+    listMatriculas.length == 0 ||
+    listExcluidos.length == 0
+  ) {
+    res.json({
+      erro: "É necessário fazer o upload das listas de egressos e ingressos",
+    });
   } else {
     let gerenciadorDeTaxa = new GeradorDeTaxa();
     let resultadoEvasao = gerenciadorDeTaxa.gerarTaxaEvasao(
       listIngressos,
       listEgressos
     );
+    //clearCache();
     res.json(resultadoEvasao);
   }
 });
@@ -93,15 +101,10 @@ router.post("/excluidos", upload.single("file"), async function (req, res) {
     return res.status(400).send("No file uploaded.");
   }
   listExcluidos = await converterExcluidosParaObjetos(req.file);
-
+  //console.log(listExcluidos)
   res.json(listExcluidos);
 
   //how to set the key of the object
-});
-
-router.get("/evasion-calc", function (req, res) {
-  evasionCalc();
-  res.json(saidaJson);
 });
 
 app.use("/upload", router);
@@ -110,6 +113,13 @@ function startServer() {
   server.listen(port, function () {
     console.log("Express server listening on ", port);
   });
+}
+
+function clearCache(req, res) {
+  listEgressos = [];
+  listIngressos = [];
+  listMatriculas = [];
+  listExcluidos = [];
 }
 
 setImmediate(startServer);
