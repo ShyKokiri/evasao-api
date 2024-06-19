@@ -38,6 +38,10 @@ const saidaJson = require("./saida.json");
 
 let listEgressos = [];
 let listIngressos = [];
+let listMatriculas = [];
+let listExcluidos = [];
+
+
 
 router.post("/ingressos", upload.single("file"), async function (req, res) {
   if (!req.file) {
@@ -63,10 +67,10 @@ router.get("/calc", (req, res) => {
     listEgressos.length == 0 ||
     listIngressos.length == 0 ||
     listMatriculas.length == 0 ||
-    listExcluidos.length == 0
-  ) {
-    res.json({
-      erro: "É necessário fazer o upload das listas de egressos e ingressos",
+    listExcluidos.length == 0 ) {
+  
+      res.status(500).json({
+      erro: "É necessário fazer o upload de todas as planilhas",
     });
   } else {
     let gerenciadorDeTaxa = new GeradorDeTaxa();
@@ -74,7 +78,7 @@ router.get("/calc", (req, res) => {
       listIngressos,
       listEgressos
     );
-    //clearCache();
+    clearCache();
     res.json(resultadoEvasao);
   }
 });
