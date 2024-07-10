@@ -113,19 +113,21 @@ function converterExcluidosParaObjetos(file) {
       let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
 
       xlData.forEach((row) => {
-        let excluido = new Excluido();
-        excluido.periodo = row["Período"];
-        excluido.situacao = row["Situação"];
-        excluido.ano = row["Ano/Semestre da Ocorrencia"];
-        excluido.unidade = row["Unidade de Lotação do Curso"];
-        excluido.curso = row["Curso"];
-        excluido.total_periodo = row["Total por Periodo"];
-        excluido.total_curso = row["Total por Curso"];
-        excluido.total_unidade = row["Total por Unidade"];
-        excluido.total_ocorrencia = row["Total por Ocorrência"];
-        excluido.total_ano = row["Total por Ano/Semestre"];
-        excluido.total = row["Total Ocorrências"];
-        excluidos.push(excluido);
+        if (isNumber(row.__EMPTY_4) || isNumber(row.__EMPTY_5)) {
+          let excluido = new Excluido();
+          //excluido.periodo = row.__EMPTY;
+          excluido.situacao = row.__EMPTY;
+          excluido.ano = row.__EMPTY_1;
+          excluido.unidade = row.__EMPTY_2;
+          excluido.curso = row.__EMPTY_3;
+          excluido.total_periodo = row.__EMPTY_4;
+          excluido.total_curso = row.__EMPTY_5;
+          excluido.total_unidade = row.__EMPTY_6;
+          excluido.total_ocorrencia = row.__EMPTY_7;
+          excluido.total_ano = row.__EMPTY_8;
+          excluido.total = row.__EMPTY_9;
+          excluidos.push(excluido);
+        }
       });
       resolve(excluidos);
     } catch (error) {
