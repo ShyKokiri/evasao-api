@@ -41,8 +41,6 @@ let listIngressos = [];
 let listMatriculas = [];
 let listExcluidos = [];
 
-
-
 router.post("/ingressos", upload.single("file"), async function (req, res) {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
@@ -67,9 +65,9 @@ router.get("/calc", (req, res) => {
     listEgressos.length == 0 ||
     listIngressos.length == 0 ||
     listMatriculas.length == 0 ||
-    listExcluidos.length == 0 ) {
-  
-      res.status(500).json({
+    listExcluidos.length == 0
+  ) {
+    res.status(500).json({
       erro: "É necessário fazer o upload de todas as planilhas",
     });
   } else {
@@ -82,6 +80,25 @@ router.get("/calc", (req, res) => {
     );
     clearCache();
     res.json(resultadoEvasao);
+  }
+});
+
+router.get("/calcsucesso", (req, res) => {
+  if (listEgressos.length == 0 || listIngressos.length == 0) {
+    res.status(500).json({
+      erro: "É necessário fazer upload das planilhas Lista de Engressos e Ingressor",
+    });
+  } else {
+    let nomeCurso = "CIÊNCIA DA COMPUTAÇÃO - BACHARELADO";
+
+    let gerenciadorDeTaxa = new GeradorDeTaxa();
+    let resultadoSucesso = gerenciadorDeTaxa.gerarTaxaSucesso(
+      nomeCurso,
+      listEgressos,
+      listIngressos
+    );
+
+    res.json(resultadoSucesso);
   }
 });
 
