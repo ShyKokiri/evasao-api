@@ -89,7 +89,7 @@ router.get("/calcsucesso", (req, res) => {
       erro: "É necessário fazer upload das planilhas Lista de Engressos e Ingressor",
     });
   } else {
-    let nomeCurso = "CIÊNCIA DA COMPUTAÇÃO - BACHARELADO";
+    let nomeCurso = req.query.curso;
 
     let gerenciadorDeTaxa = new GeradorDeTaxa();
     let resultadoSucesso = gerenciadorDeTaxa.gerarTaxaSucesso(
