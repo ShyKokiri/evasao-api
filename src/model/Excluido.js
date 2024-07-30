@@ -3,6 +3,7 @@ class Excluido {
     this.periodo = "";
     this.situacao = "";
     this.ano = 0;
+    this.semestre = 0;
     this.unidade = "";
     this.curso = "";
     this.total_periodo = 0;

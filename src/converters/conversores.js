@@ -75,8 +75,8 @@ function converteRowParaEgresso(row) {
   return egresso;
 }
 
-function isNumber (value){
-    return !isNaN(value)
+function isNumber(value) {
+  return !isNaN(value);
 }
 function converterMatriculasParaObjetos(file) {
   return new Promise((resolve, reject) => {
@@ -84,12 +84,15 @@ function converterMatriculasParaObjetos(file) {
       let matriculas = [];
       const workbook = xlsx.readFile(file.path);
       const sheet_name_list = workbook.SheetNames;
-      let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+      let xlData = xlsx.utils.sheet_to_json(
+        workbook.Sheets[sheet_name_list[0]]
+      );
 
       xlData.forEach((row) => {
         if (isNumber(row.__EMPTY_3) || isNumber(row.__EMPTY_4)) {
           let matricula = new Matricula();
-          matricula.ano = row.__EMPTY;
+          matricula.ano = row.__EMPTY.split("/")[0];
+          matricula.semestre = row.__EMPTY.split("/")[1];
           matricula.faculdade = row.__EMPTY_1;
           matricula.curso = row.__EMPTY_2;
           matricula.matriculas = row.__EMPTY_3;
@@ -110,14 +113,17 @@ function converterExcluidosParaObjetos(file) {
       let excluidos = [];
       const workbook = xlsx.readFile(file.path);
       const sheet_name_list = workbook.SheetNames;
-      let xlData = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+      let xlData = xlsx.utils.sheet_to_json(
+        workbook.Sheets[sheet_name_list[0]]
+      );
 
       xlData.forEach((row) => {
         if (isNumber(row.__EMPTY_4) || isNumber(row.__EMPTY_5)) {
           let excluido = new Excluido();
           //excluido.periodo = row.__EMPTY;
           excluido.situacao = row.__EMPTY;
-          excluido.ano = row.__EMPTY_1;
+          excluido.ano = row.__EMPTY_1.split("/")[0];
+          excluido.semestre = row.__EMPTY_1.split("/")[1];
           excluido.unidade = row.__EMPTY_2;
           excluido.curso = row.__EMPTY_3;
           excluido.total_periodo = row.__EMPTY_4;
@@ -140,5 +146,5 @@ module.exports = {
   converterEgressosParaObjetos,
   converterIngressosParaObjetos,
   converterMatriculasParaObjetos,
-  converterExcluidosParaObjetos
+  converterExcluidosParaObjetos,
 };

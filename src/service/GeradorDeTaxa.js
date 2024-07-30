@@ -2,20 +2,36 @@ module.exports = class GeradorDeTaxa {
   constructor() {}
 
   getExcluidos(ano, listExcluidos) {
-    return listExcluidos.find((e) => e.ano === ano).total_periodo;
+    const result = listExcluidos
+      .filter((e) => e.ano === ano)
+      .reduce((acc, obj) => {
+        return acc + parseInt(obj.total_periodo);
+      }, 0);
+
+    return result;
+    //return listExcluidos.find((e) => e.ano === ano).total_periodo;
+
+    //total_periodo 2010 1  - 100
+    //total_periodo 2010 2   - 90
   }
 
   getMatriculados(ano, listMatriculas) {
-    return listMatriculas.find((e) => e.ano === ano).matriculas;
+    const result = listMatriculas
+      .filter((e) => e.ano === ano)
+      .reduce((acc, obj) => {
+        return acc + parseInt(obj.matriculas);
+      }, 0);
+    return result;
   }
   //* as planilhas já vem com curso filtrado
-  gerarTaxaEvasao(listIngressos, listEgressos, listExcluidos, listMatriculas) {
+  gerarTaxaEvasao(listExcluidos, listMatriculas) {
     let arrAnos = [];
-    listMatriculas.forEach((e) => arrAnos.push(e.ano));
+    let setAnos = new Set(listExcluidos.map((e) => e.ano));
+    // listMatriculas.forEach((e) => arrAnos.push(e.ano));
 
     const taxasEvasao = [];
 
-    arrAnos.forEach((ano) => {
+    setAnos.forEach((ano) => {
       const taxaEvasao =
         (this.getExcluidos(ano, listExcluidos) /
           this.getMatriculados(ano, listMatriculas)) *

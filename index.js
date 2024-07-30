@@ -73,12 +73,10 @@ router.get("/calc", (req, res) => {
   } else {
     let gerenciadorDeTaxa = new GeradorDeTaxa();
     let resultadoEvasao = gerenciadorDeTaxa.gerarTaxaEvasao(
-      listIngressos,
-      listEgressos,
       listExcluidos,
       listMatriculas
     );
-    clearCache();
+    //clearCache();
     res.json(resultadoEvasao);
   }
 });
