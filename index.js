@@ -60,6 +60,8 @@ router.post("/egressos", upload.single("file"), async function (req, res) {
 });
 
 router.get("/calc", (req, res) => {
+  let nomeCurso = req.query.curso;
+
   // realizar o calc da evasao
   if (
     listEgressos.length == 0 ||
@@ -72,12 +74,15 @@ router.get("/calc", (req, res) => {
     });
   } else {
     let gerenciadorDeTaxa = new GeradorDeTaxa();
-    let resultadoEvasao = gerenciadorDeTaxa.gerarTaxaEvasao(
+    let resultado = gerenciadorDeTaxa.gerarTaxas(
+      nomeCurso,
+      listEgressos,
+      listIngressos,
       listExcluidos,
       listMatriculas
     );
     //clearCache();
-    res.json(resultadoEvasao);
+    res.json(resultado);
   }
 });
 
