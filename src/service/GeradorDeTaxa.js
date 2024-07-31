@@ -28,11 +28,11 @@ module.exports = class GeradorDeTaxa {
     const taxasEvasao = [];
 
     arrAnos.forEach((ano) => {
-      const taxaEvasao =
+      let taxaEvasao =
         (this.getExcluidos(ano, listExcluidos) /
           this.getMatriculados(ano, listMatriculas)) *
         100;
-
+      if (!isNaN(taxaEvasao)) taxaEvasao = parseFloat(taxaEvasao).toFixed(2);
       taxasEvasao.push({
         ano,
         taxaEvasao,
@@ -79,7 +79,8 @@ module.exports = class GeradorDeTaxa {
 
       let egresso = { soma: somaEgr, ano };
 
-      const taxaSucesso = egresso.soma / ingresso.soma;
+      let taxaSucesso = egresso.soma / ingresso.soma;
+      if (!isNaN(taxaSucesso)) taxaSucesso = parseFloat(taxaSucesso).toFixed(2);
       let sucesso = {
         ano,
         taxaSucesso,
