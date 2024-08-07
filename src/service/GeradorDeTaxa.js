@@ -3,7 +3,7 @@ module.exports = class GeradorDeTaxa {
 
   getExcluidos(ano, listExcluidos) {
     const result = listExcluidos
-      .filter((e) => e.ano === ano)
+      .filter((e) => e.ano === ano && e.periodo != "1º")
       .reduce((acc, obj) => {
         return acc + parseInt(obj.total_periodo);
       }, 0);
@@ -16,10 +16,11 @@ module.exports = class GeradorDeTaxa {
   }
 
   getMatriculados(ano, listMatriculas) {
-    const result = listMatriculas
-      .filter((e) => e.ano === ano)
+    const filtro = listMatriculas
+      .filter((e) => e.ano === ano && e.periodo != "1º")
+      const result = filtro
       .reduce((acc, obj) => {
-        return acc + parseInt(obj.matriculas);
+        return acc + parseInt(obj.total_periodo);
       }, 0);
     return result;
   }
@@ -46,8 +47,6 @@ module.exports = class GeradorDeTaxa {
 
   //as planilham vem com todos os cursos
   gerarTaxaSucesso(arrAnos, nomeCurso, listEgressos, listIngressos) {
-    //criar um filtro de cursos aqui
-    //1) Obter o nome do curso a ser fitrado
 
     const arrIngressosFiltrado = listIngressos.filter(
       (item) => item.curso == nomeCurso
@@ -79,15 +78,12 @@ module.exports = class GeradorDeTaxa {
 
       let egresso = { soma: somaEgr, ano };
 
-      let taxaSucesso = egresso.soma / ingresso.soma;
+      let taxaSucesso = (egresso.soma / ingresso.soma) * 100;
       if (!isNaN(taxaSucesso)) taxaSucesso = parseFloat(taxaSucesso).toFixed(2);
       let sucesso = {
         ano,
         taxaSucesso,
       };
-
-      //TODO: Separar por unidade,
-      // pensar como resolver a soma anual quando o numero de semestres de ingressos é diferente de egressos.
 
       arraySucesso.push(sucesso);
     });
@@ -97,10 +93,6 @@ module.exports = class GeradorDeTaxa {
 
     return arraySucesso;
 
-    //3) Buscar por todos os anos  deste curso em egressos
-
-    //4) Calular as taxas por ano do curso
-    //5) Guardar em um array de resultados
   }
 
   gerarTaxas(
@@ -117,14 +109,13 @@ module.exports = class GeradorDeTaxa {
       nomeCurso,
       listEgressos,
       listIngressos
-    ); //[ { ano: 2010, taxaSucesso: 10.5}, { ano: 2012,  taxaSucesso:15.5}]
+    ); 
 
     const arrTaxasEvasao = this.gerarTaxaEvasao(
       arrAnos,
       listExcluidos,
       listMatriculas
     );
-    ////[ { ano: 2010, taxaEvasao:10.5}, { ano: 2012, taxaEvasao: 15.5}]
 
     const taxaTotal = [];
 

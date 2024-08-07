@@ -78,6 +78,36 @@ function converteRowParaEgresso(row) {
 function isNumber(value) {
   return !isNaN(value);
 }
+
+// function converterMatriculasParaObjetosOld(file) {
+//   return new Promise((resolve, reject) => {
+//     try {
+//       let matriculas = [];
+//       const workbook = xlsx.readFile(file.path);
+//       const sheet_name_list = workbook.SheetNames;
+//       let xlData = xlsx.utils.sheet_to_json(
+//         workbook.Sheets[sheet_name_list[0]]
+//       );
+
+//       xlData.forEach((row) => {
+//         if (isNumber(row.__EMPTY_3) || isNumber(row.__EMPTY_4)) {
+//           let matricula = new Matricula();
+//           matricula.ano = row.__EMPTY.split("/")[0];
+//           matricula.semestre = row.__EMPTY.split("/")[1];
+//           matricula.faculdade = row.__EMPTY_1;
+//           matricula.curso = row.__EMPTY_2;
+//           matricula.matriculas = row.__EMPTY_3;
+//           matricula.total = row.__EMPTY_4;
+//           matriculas.push(matricula);
+//         }
+//       });
+//       resolve(matriculas);
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// }
+
 function converterMatriculasParaObjetos(file) {
   return new Promise((resolve, reject) => {
     try {
@@ -89,14 +119,20 @@ function converterMatriculasParaObjetos(file) {
       );
 
       xlData.forEach((row) => {
-        if (isNumber(row.__EMPTY_3) || isNumber(row.__EMPTY_4)) {
+        if (isNumber(row.__EMPTY_4) || isNumber(row.__EMPTY_5)) {
           let matricula = new Matricula();
-          matricula.ano = row.__EMPTY.split("/")[0];
-          matricula.semestre = row.__EMPTY.split("/")[1];
-          matricula.faculdade = row.__EMPTY_1;
-          matricula.curso = row.__EMPTY_2;
-          matricula.matriculas = row.__EMPTY_3;
-          matricula.total = row.__EMPTY_4;
+          matricula.periodo = row["Totalização de Acadêmicos por Situação"];
+          matricula.situacao = row.__EMPTY;
+          matricula.ano = row.__EMPTY_1.split("/")[0];
+          matricula.semestre = row.__EMPTY_1.split("/")[1];
+          matricula.unidade = row.__EMPTY_2;
+          matricula.curso = row.__EMPTY_3;
+          matricula.total_periodo = row.__EMPTY_4;
+          matricula.total_curso = row.__EMPTY_5;
+          matricula.total_unidade = row.__EMPTY_6;
+          matricula.total_ocorrencia = row.__EMPTY_7;
+          matricula.total_ano = row.__EMPTY_8;
+          matricula.total = row.__EMPTY_9;
           matriculas.push(matricula);
         }
       });
@@ -120,7 +156,7 @@ function converterExcluidosParaObjetos(file) {
       xlData.forEach((row) => {
         if (isNumber(row.__EMPTY_4) || isNumber(row.__EMPTY_5)) {
           let excluido = new Excluido();
-          //excluido.periodo = row.__EMPTY;
+          excluido.periodo = row["Totalização de Acadêmicos por Situação"];
           excluido.situacao = row.__EMPTY;
           excluido.ano = row.__EMPTY_1.split("/")[0];
           excluido.semestre = row.__EMPTY_1.split("/")[1];
